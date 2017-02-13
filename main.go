@@ -1,31 +1,54 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"os"
 )
 
+const service = "https://sitecheck.sucuri.net/"
+
+var website = flag.String("d", "", "Domain name or web application to scan")
+var usecache = flag.Bool("c", false, "Recycle the results from a previous scan")
+
 func main() {
-	if len(os.Args) <= 1 {
-		fmt.Println("Sucuri SiteCheck")
-		fmt.Println("  http://cixtor.com/")
-		fmt.Println("  https://sitecheck.sucuri.net/")
-		fmt.Println("  https://github.com/cixtor/mamutools")
+	flag.Usage = func() {
+		fmt.Println("SiteCheck, Web Application Security Scanner")
 		fmt.Println("  https://en.wikipedia.org/wiki/Web_application_security_scanner")
-		fmt.Println("Usage: sitecheck example.com")
+		fmt.Println("  https://github.com/cixtor/sitecheck")
+		fmt.Println("  https://sitecheck.sucuri.net/")
+		fmt.Println("  https://cixtor.com/")
+		fmt.Println()
+		fmt.Println("The malware scanner is a free tool powered by Sucuri SiteCheck,")
+		fmt.Println("it will check your website for known malware, blacklisting status,")
+		fmt.Println("website errors, and out-of-date software. Although we do our best")
+		fmt.Println("to provide the best results, full accuracy is not realistic, and")
+		fmt.Println("not guaranteed.")
+		fmt.Println()
+		fmt.Println("Usage:")
+		flag.PrintDefaults()
 		os.Exit(2)
 	}
 
-	var domain string = os.Args[1]
-	var scanner SiteCheck
-	var result Result
+	flag.Parse()
 
-	fmt.Printf(" Sucuri SiteCheck\n")
-	fmt.Printf(" https://sitecheck.sucuri.net/\n")
-	fmt.Printf(" Scanning %s ...\n\n", domain)
+	if *website == "" {
+		fmt.Println("Invalid domain name or web application")
+		os.Exit(1)
+	}
 
-	result = scanner.Data(domain)
-	scanner.Print(result)
+	scanner := NewScanner(*website)
 
-	os.Exit(0)
+	if *usecache {
+		scanner.UseCachedResults()
+	}
+
+	fmt.Printf("Scanning %s ...", *website)
+
+	if err := scanner.Scan(); err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+
+	scanner.Print()
 }
