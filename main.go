@@ -10,6 +10,7 @@ const service = "https://sitecheck.sucuri.net/"
 
 var website = flag.String("d", "", "Domain name or web application to scan")
 var usecache = flag.Bool("c", false, "Recycle the results from a previous scan")
+var export = flag.Bool("e", false, "Export scan results as a JSON encoded string")
 
 func main() {
 	flag.Usage = func() {
@@ -43,11 +44,17 @@ func main() {
 		scanner.UseCachedResults()
 	}
 
-	fmt.Printf("Scanning %s ...", *website)
-
 	if err := scanner.Scan(); err != nil {
 		fmt.Println(err)
 		os.Exit(1)
+	}
+
+	if *export {
+		if err := scanner.Export(os.Stdout); err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+		return
 	}
 
 	scanner.Print()

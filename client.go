@@ -135,10 +135,12 @@ func (s *Scanner) Justify(text string) string {
 	return final
 }
 
+func (s *Scanner) Export(w io.Writer) error {
+	return json.NewEncoder(w).Encode(s.Report)
+}
+
 func (s *Scanner) Print() {
-	fmt.Print("\r") /* clear previous loading message */
-	fmt.Print("\033[48;5;008m @ Website Information \033[0m")
-	fmt.Print(strings.Repeat("\x20", len(s.Domain)) + "\n")
+	fmt.Println("\033[48;5;008m @ Website Information \033[0m")
 	for key, value := range s.Report.Scan {
 		fmt.Printf(" \033[1;95m%s:\033[0m %s\n", key, strings.Join(value, ",\x20"))
 	}
