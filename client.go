@@ -9,12 +9,16 @@ import (
 	"strings"
 )
 
+// Scanner holds the metadata for the malware scan procedure, including the
+// original URL requested by the user, some optional parameters for the HTTP
+// request and the JSON-decoded data obtained from the scan results.
 type Scanner struct {
 	Domain    string
 	FromCache bool
 	Report    Result
 }
 
+// Result contains the JSON-decoded data from the API call.
 type Result struct {
 	Scan            map[string][]string
 	System          map[string][]string
@@ -27,6 +31,7 @@ type Result struct {
 	WebApp          Application
 }
 
+// Application contains details for the scan results.
 type Application struct {
 	Info    [][]string
 	Warn    []string
@@ -34,15 +39,18 @@ type Application struct {
 	Notice  []string
 }
 
+// InfoWarning contains details for the scan results.
 type InfoWarning struct {
 	Info [][]string
 	Warn [][]string
 }
 
+// NewScanner returns an instance of the program with a new domain.
 func NewScanner(domain string) *Scanner {
 	return &Scanner{Domain: domain}
 }
 
+// URL builds and returns the URL for the API calls.
 func (s *Scanner) URL() string {
 	urlStr := service
 
@@ -59,10 +67,12 @@ func (s *Scanner) URL() string {
 	return urlStr
 }
 
+// UseCachedResults forces the scanner to retrieve cached results.
 func (s *Scanner) UseCachedResults() {
 	s.FromCache = true
 }
 
+// Request builds and sends the HTTP request to the API service.
 func (s *Scanner) Request() (io.Reader, error) {
 	client := &http.Client{}
 	req, err := http.NewRequest("GET", s.URL(), nil)
@@ -91,6 +101,7 @@ func (s *Scanner) Request() (io.Reader, error) {
 	return &buf, nil
 }
 
+// Scan executes the HTTP request, reads and decodes the scan results.
 func (s *Scanner) Scan() error {
 	reader, err := s.Request()
 
@@ -101,12 +112,14 @@ func (s *Scanner) Scan() error {
 	return json.NewDecoder(reader).Decode(&s.Report)
 }
 
+// Justify formats the output of the scan results into human readable blocks.
 func (s *Scanner) Justify(text string) string {
-	var chunk int = 97
-	var lines int = 10
-	var limit int = lines * chunk
 	var final string
 	var counter int
+
+	chunk := 97 /* maximum width per line */
+	lines := 10 /* maximum number of lines */
+	limit := lines * chunk
 
 	text = strings.Replace(text, "\n", "", -1)
 	text = strings.Replace(text, "\t", "", -1)
@@ -135,10 +148,12 @@ func (s *Scanner) Justify(text string) string {
 	return final
 }
 
+// Export writes to io.Writer the JSON-encoded scan results.
 func (s *Scanner) Export(w io.Writer) error {
 	return json.NewEncoder(w).Encode(s.Report)
 }
 
+// Print writes to io.Writer the scan results.
 func (s *Scanner) Print() {
 	fmt.Println("\033[48;5;008m @ Website Information \033[0m")
 	for key, value := range s.Report.Scan {
@@ -205,11 +220,11 @@ func (s *Scanner) Print() {
 	// Print blacklist status information.
 	if len(s.Report.Blacklist.Warn) > 0 || len(s.Report.Blacklist.Info) > 0 {
 		fmt.Println()
-		var blacklist_color string = "034"
+		blacklistColor := "034"
 		if len(s.Report.Blacklist.Warn) > 0 {
-			blacklist_color = "161"
+			blacklistColor = "161"
 		}
-		fmt.Printf("\033[48;5;%sm @ Blacklist Status \033[0m\n", blacklist_color)
+		fmt.Printf("\033[48;5;%sm @ Blacklist Status \033[0m\n", blacklistColor)
 		for _, values := range s.Report.Blacklist.Warn {
 			fmt.Printf(" \033[0;91m\u2718\033[0m %s\n", values[0])
 			fmt.Printf("   %s\n", values[1])
