@@ -59,7 +59,7 @@ func (s *Scanner) URL() string {
 
 	if !s.FromCache {
 		/* get fresh results */
-		urlStr += "&clean=1"
+		urlStr += "&clear=1"
 	}
 
 	urlStr += "&scan=" + s.Domain
