@@ -20,29 +20,29 @@ type Scanner struct {
 
 // Result contains the JSON-decoded data from the API call.
 type Result struct {
-	Scan            map[string][]string
-	System          map[string][]string
-	Links           map[string][]string
-	Version         map[string][]string
-	Recommendations [][]string
-	OutdatedScan    [][]string
-	Malware         InfoWarning
-	Blacklist       InfoWarning
-	WebApp          Application
+	Scan            map[string][]string `json:"SCAN"`
+	Version         map[string][]string `json:"VERSION"`
+	System          map[string][]string `json:"SYSTEM"`
+	Links           map[string][]string `json:"LINKS"`
+	Recommendations [][]string          `json:"RECOMMENDATIONS"`
+	OutdatedScan    [][]string          `json:"OUTDATEDSCAN"`
+	Blacklist       InfoWarning         `json:"BLACKLIST"`
+	Malware         InfoWarning         `json:"MALWARE"`
+	WebApp          Application         `json:"WEBAPP"`
 }
 
 // Application contains details for the scan results.
 type Application struct {
-	Info    [][]string
-	Warn    []string
-	Version []string
-	Notice  []string
+	Info    [][]string `json:"INFO"`
+	Warn    []string   `json:"WARN"`
+	Version []string   `json:"VERSION"`
+	Notice  []string   `json:"NOTICE"`
 }
 
 // InfoWarning contains details for the scan results.
 type InfoWarning struct {
-	Info [][]string
-	Warn [][]string
+	Info [][]string `json:"INFO"`
+	Warn [][]string `json:"WARN"`
 }
 
 // NewScanner returns an instance of the program with a new domain.
