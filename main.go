@@ -44,18 +44,10 @@ func main() {
 		scanner.UseCachedResults()
 	}
 
-	if err := scanner.Scan(); err != nil {
+	if err := scanner.Scan(*export); err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}
 
-	if *export {
-		if err := scanner.Export(os.Stdout); err != nil {
-			fmt.Println(err)
-			os.Exit(1)
-		}
-		return
-	}
-
-	scanner.Print()
+	scanner.Print(*export)
 }

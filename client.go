@@ -102,11 +102,16 @@ func (s *Scanner) Request() (io.Reader, error) {
 }
 
 // Scan executes the HTTP request, reads and decodes the scan results.
-func (s *Scanner) Scan() error {
+func (s *Scanner) Scan(export bool) error {
 	reader, err := s.Request()
 
 	if err != nil {
 		return err
+	}
+
+	if export {
+		fmt.Println(reader)
+		return nil
 	}
 
 	return json.NewDecoder(reader).Decode(&s.Report)
@@ -148,13 +153,12 @@ func (s *Scanner) Justify(text string) string {
 	return final
 }
 
-// Export writes to io.Writer the JSON-encoded scan results.
-func (s *Scanner) Export(w io.Writer) error {
-	return json.NewEncoder(w).Encode(s.Report)
-}
-
 // Print writes to io.Writer the scan results.
-func (s *Scanner) Print() {
+func (s *Scanner) Print(export bool) {
+	if export {
+		return
+	}
+
 	fmt.Println("\033[48;5;008m @ Website Information \033[0m")
 	for key, value := range s.Report.Scan {
 		fmt.Printf(" \033[1;95m%s:\033[0m %s\n", key, strings.Join(value, ",\x20"))
