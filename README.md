@@ -6,10 +6,19 @@
 >
 > More info at [Web Application Security Scanner, Wikipedia](https://en.wikipedia.org/wiki/Web_application_security_scanner)
 
-The malware scanner is a free tool powered by [Sucuri SiteCheck](https://sitecheck.sucuri.net), it will check your website for known malware, blacklisting status, website errors, and out-of-date software. Although we do our best to provide the best results, 100% accuracy is not realistic, and not guaranteed. Note that the information returned by this tool will be kept available in the website for other people to see, if you are not comfortable with this you may consider to use another scanner.
+The malware scanner is a free tool powered by [Sucuri SiteCheck](https://sitecheck.sucuri.net), it checks your website for known malware, blacklisting status, website errors, and out-of-date software. Although the tool does its best to provide the best results, 100% accuracy is not realistic and not guaranteed. Note that the information returned by this tool will be kept available in the service for other people to see.
 
 ### Installation
 
 ```shell
 go get -u github.com/cixtor/sitecheck
+```
+
+### Usage
+
+```
+$ sitecheck -help
+$ sitecheck -d example.com
+$ sitecheck -d example.com -e | python -m json.tool
+$ sitecheck -d example.com -e -c | python -m json.tool
 ```
