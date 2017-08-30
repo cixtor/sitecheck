@@ -20,8 +20,8 @@ type Scanner struct {
 
 // Result contains the JSON-decoded data from the API call.
 type Result struct {
-	Scan            map[string][]string `json:"SCAN"`
-	Version         map[string][]string `json:"VERSION"`
+	Scan            ResultScan          `json:"SCAN"`
+	Version         ResultVersion       `json:"VERSION"`
 	System          map[string][]string `json:"SYSTEM"`
 	Links           map[string][]string `json:"LINKS"`
 	Recommendations [][]string          `json:"RECOMMENDATIONS"`
@@ -29,6 +29,29 @@ type Result struct {
 	Blacklist       InfoWarning         `json:"BLACKLIST"`
 	Malware         InfoWarning         `json:"MALWARE"`
 	WebApp          Application         `json:"WEBAPP"`
+}
+
+// ResultScan contains the details for the scan target.
+type ResultScan struct {
+	Site   []string `json:"SITE"`
+	Domain []string `json:"DOMAIN"`
+	IP     []string `json:"IP"`
+	CMS    []string `json:"CMS"`
+	WAF    ScanWAF  `json:"WAF"`
+}
+
+// ScanWAF contains the details for the WAF status.
+type ScanWAF struct {
+	HasWAF       int `json:"HASWAF"`
+	HasSucuriWAF int `json:"HASSUCURIWAF"`
+}
+
+// ResultVersion contains the details for the result version.
+type ResultVersion struct {
+	Version      []string `json:"VERSION"`
+	BuildDate    []string `json:"BUILDDATE"`
+	DatabaseDate []string `json:"DBDATE"`
+	CompiledDate []string `json:"COMPILEDDATE"`
 }
 
 // Application contains details for the scan results.
@@ -159,15 +182,7 @@ func (s *Scanner) Print(export bool) {
 		return
 	}
 
-	fmt.Println("\033[48;5;008m @ Website Information \033[0m")
-	for key, value := range s.Report.Scan {
-		fmt.Printf(" \033[1;95m%s:\033[0m %s\n", key, strings.Join(value, ",\x20"))
-	}
-	for _, values := range s.Report.System {
-		for _, value := range values {
-			fmt.Printf(" \033[0;2m%s\033[0m\n", value)
-		}
-	}
+	s.printWebsiteInformation()
 
 	if len(s.Report.WebApp.Warn) > 0 ||
 		len(s.Report.WebApp.Info) > 0 ||
@@ -246,6 +261,31 @@ func (s *Scanner) Print(export bool) {
 		for _, values := range s.Report.Malware.Warn {
 			fmt.Printf(" \033[0;91m\u2022\033[0m %s\n", values[0])
 			fmt.Printf("%s", s.Justify(values[1]))
+		}
+	}
+}
+
+func (s *Scanner) printWebsiteInformation() {
+	fmt.Println("\033[48;5;008m @ Website Information \033[0m")
+
+	fmt.Printf(" \033[1;95mSite:\033[0m %s\n", strings.Join(s.Report.Scan.Site, ",\x20"))
+	fmt.Printf(" \033[1;95mDomain:\033[0m %s\n", strings.Join(s.Report.Scan.Domain, ",\x20"))
+	fmt.Printf(" \033[1;95mIP:\033[0m %s\n", strings.Join(s.Report.Scan.IP, ",\x20"))
+	fmt.Printf(" \033[1;95mCMS:\033[0m %s\n", strings.Join(s.Report.Scan.CMS, ",\x20"))
+
+	if s.Report.Scan.WAF.HasWAF == 1 {
+		if s.Report.Scan.WAF.HasSucuriWAF == 1 {
+			fmt.Printf(" \033[1;95mFirewall:\033[0m Sucuri Firewall\n")
+		} else {
+			fmt.Printf(" \033[1;95mFirewall:\033[0m Generic Firewall\n")
+		}
+	} else {
+		fmt.Printf(" \033[1;95mFirewall:\033[0m \033[0;91mNo\033[0m\n")
+	}
+
+	for _, values := range s.Report.System {
+		for _, value := range values {
+			fmt.Printf(" \033[0;2m%s\033[0m\n", value)
 		}
 	}
 }
