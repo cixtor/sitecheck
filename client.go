@@ -107,9 +107,7 @@ func (s *Scanner) Justify(text string) string {
 		}
 	}
 
-	final += "\n"
-
-	return final
+	return final + "\n"
 }
 
 // Print writes to io.Writer the scan results.
@@ -119,26 +117,7 @@ func (s *Scanner) Print(export bool) {
 	}
 
 	s.printWebsiteInformation()
-
-	if len(s.Report.WebApp.Warn) > 0 ||
-		len(s.Report.WebApp.Info) > 0 ||
-		len(s.Report.WebApp.Version) > 0 ||
-		len(s.Report.WebApp.Notice) > 0 {
-		fmt.Println()
-		fmt.Println("\033[48;5;008m @ Application Details \033[0m")
-		for _, value := range s.Report.WebApp.Warn {
-			fmt.Printf(" %s\n", value)
-		}
-		for _, values := range s.Report.WebApp.Info {
-			fmt.Printf(" %s \033[0;2m%s\033[0m\n", values[0], values[1])
-		}
-		for _, value := range s.Report.WebApp.Version {
-			fmt.Printf(" %s\n", value)
-		}
-		for _, value := range s.Report.WebApp.Notice {
-			fmt.Printf(" %s\n", value)
-		}
-	}
+	s.printApplicationDetails()
 
 	// Print security recommendations.
 	if len(s.Report.Recommendations) > 0 {
@@ -223,5 +202,33 @@ func (s *Scanner) printWebsiteInformation() {
 		for _, value := range values {
 			fmt.Printf(" \033[0;2m%s\033[0m\n", value)
 		}
+	}
+}
+
+func (s *Scanner) printApplicationDetails() {
+	if len(s.Report.WebApp.Warn) <= 0 &&
+		len(s.Report.WebApp.Info) <= 0 &&
+		len(s.Report.WebApp.Version) <= 0 &&
+		len(s.Report.WebApp.Notice) <= 0 {
+		return
+	}
+
+	fmt.Println()
+	fmt.Println("\033[48;5;008m @ Application Details \033[0m")
+
+	for _, value := range s.Report.WebApp.Warn {
+		fmt.Printf(" %s\n", value)
+	}
+
+	for _, values := range s.Report.WebApp.Info {
+		fmt.Printf(" %s \033[0;2m%s\033[0m\n", values[0], values[1])
+	}
+
+	for _, value := range s.Report.WebApp.Version {
+		fmt.Printf(" %s\n", value)
+	}
+
+	for _, value := range s.Report.WebApp.Notice {
+		fmt.Printf(" %s\n", value)
 	}
 }
