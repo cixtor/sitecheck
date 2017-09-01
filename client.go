@@ -119,17 +119,7 @@ func (s *Scanner) Print(export bool) {
 	s.printWebsiteInformation()
 	s.printApplicationDetails()
 	s.printRecommendations()
-
-	// Print outdated software information.
-	if len(s.Report.OutdatedScan) > 0 {
-		fmt.Println()
-		fmt.Println("\033[48;5;068m @ OutdatedScan \033[0m")
-		for _, values := range s.Report.OutdatedScan {
-			fmt.Printf(" \033[0;94m\u2022\033[0m %s\n", values[0])
-			fmt.Printf("   %s\n", values[1])
-			fmt.Printf("   %s\n", values[2])
-		}
-	}
+	s.printOutdatedScan()
 
 	// Print links, iframes, and local/external javascript files.
 	for key, values := range s.Report.Links {
@@ -235,5 +225,20 @@ func (s *Scanner) printRecommendations() {
 		fmt.Print(" \033[0;1m" + values[0] + "\033[0m\n")
 		fmt.Print("   " + values[1] + "\n")
 		fmt.Print("   " + values[2] + "\n")
+	}
+}
+
+func (s *Scanner) printOutdatedScan() {
+	if len(s.Report.OutdatedScan) <= 0 {
+		return
+	}
+
+	fmt.Println()
+	fmt.Println("\033[48;5;068m @ OutdatedScan \033[0m")
+
+	for _, values := range s.Report.OutdatedScan {
+		fmt.Printf(" \033[0;94m\u2022\033[0m %s\n", values[0])
+		fmt.Printf("   %s\n", values[1])
+		fmt.Printf("   %s\n", values[2])
 	}
 }
