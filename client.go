@@ -118,18 +118,7 @@ func (s *Scanner) Print(export bool) {
 
 	s.printWebsiteInformation()
 	s.printApplicationDetails()
-
-	// Print security recommendations.
-	if len(s.Report.Recommendations) > 0 {
-		fmt.Println()
-		fmt.Println("\033[48;5;068m @ Recommendations \033[0m")
-		for _, values := range s.Report.Recommendations {
-			fmt.Print(" \033[0;94m\u2022\033[0m")
-			fmt.Print(" \033[0;1m" + values[0] + "\033[0m\n")
-			fmt.Print("   " + values[1] + "\n")
-			fmt.Print("   " + values[2] + "\n")
-		}
-	}
+	s.printRecommendations()
 
 	// Print outdated software information.
 	if len(s.Report.OutdatedScan) > 0 {
@@ -230,5 +219,21 @@ func (s *Scanner) printApplicationDetails() {
 
 	for _, value := range s.Report.WebApp.Notice {
 		fmt.Printf(" %s\n", value)
+	}
+}
+
+func (s *Scanner) printRecommendations() {
+	if len(s.Report.Recommendations) <= 0 {
+		return
+	}
+
+	fmt.Println()
+	fmt.Println("\033[48;5;068m @ Recommendations \033[0m")
+
+	for _, values := range s.Report.Recommendations {
+		fmt.Print(" \033[0;94m\u2022\033[0m")
+		fmt.Print(" \033[0;1m" + values[0] + "\033[0m\n")
+		fmt.Print("   " + values[1] + "\n")
+		fmt.Print("   " + values[2] + "\n")
 	}
 }
