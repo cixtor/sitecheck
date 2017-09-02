@@ -120,15 +120,7 @@ func (s *Scanner) Print(export bool) {
 	s.printApplicationDetails()
 	s.printRecommendations()
 	s.printOutdatedScan()
-
-	// Print links, iframes, and local/external javascript files.
-	for key, values := range s.Report.Links {
-		fmt.Println()
-		fmt.Printf("\033[48;5;097m @ Links %s \033[0m\n", key)
-		for _, value := range values {
-			fmt.Printf(" %s\n", value)
-		}
-	}
+	s.printLinks()
 
 	// Print blacklist status information.
 	if len(s.Report.Blacklist.Warn) > 0 || len(s.Report.Blacklist.Info) > 0 {
@@ -240,5 +232,16 @@ func (s *Scanner) printOutdatedScan() {
 		fmt.Printf(" \033[0;94m\u2022\033[0m %s\n", values[0])
 		fmt.Printf("   %s\n", values[1])
 		fmt.Printf("   %s\n", values[2])
+	}
+}
+
+func (s *Scanner) printLinks() {
+	for key, values := range s.Report.Links {
+		fmt.Println()
+		fmt.Printf("\033[48;5;097m @ Links %s \033[0m\n", key)
+
+		for _, value := range values {
+			fmt.Printf(" %s\n", value)
+		}
 	}
 }
