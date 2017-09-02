@@ -121,24 +121,7 @@ func (s *Scanner) Print(export bool) {
 	s.printRecommendations()
 	s.printOutdatedScan()
 	s.printLinks()
-
-	// Print blacklist status information.
-	if len(s.Report.Blacklist.Warn) > 0 || len(s.Report.Blacklist.Info) > 0 {
-		fmt.Println()
-		blacklistColor := "034"
-		if len(s.Report.Blacklist.Warn) > 0 {
-			blacklistColor = "161"
-		}
-		fmt.Printf("\033[48;5;%sm @ Blacklist Status \033[0m\n", blacklistColor)
-		for _, values := range s.Report.Blacklist.Warn {
-			fmt.Printf(" \033[0;91m\u2718\033[0m %s\n", values[0])
-			fmt.Printf("   %s\n", values[1])
-		}
-		for _, values := range s.Report.Blacklist.Info {
-			fmt.Printf(" \033[0;92m\u2714\033[0m %s\n", values[0])
-			fmt.Printf("   %s\n", values[1])
-		}
-	}
+	s.printBlacklistStatus()
 
 	// Print malware payload information.
 	if len(s.Report.Malware.Warn) > 0 {
@@ -243,5 +226,31 @@ func (s *Scanner) printLinks() {
 		for _, value := range values {
 			fmt.Printf(" %s\n", value)
 		}
+	}
+}
+
+func (s *Scanner) printBlacklistStatus() {
+	if len(s.Report.Blacklist.Warn) <= 0 && len(s.Report.Blacklist.Info) <= 0 {
+		return
+	}
+
+	fmt.Println()
+
+	blacklistColor := "034"
+
+	if len(s.Report.Blacklist.Warn) > 0 {
+		blacklistColor = "161"
+	}
+
+	fmt.Printf("\033[48;5;%sm @ Blacklist Status \033[0m\n", blacklistColor)
+
+	for _, values := range s.Report.Blacklist.Warn {
+		fmt.Printf(" \033[0;91m\u2718\033[0m %s\n", values[0])
+		fmt.Printf("   %s\n", values[1])
+	}
+
+	for _, values := range s.Report.Blacklist.Info {
+		fmt.Printf(" \033[0;92m\u2714\033[0m %s\n", values[0])
+		fmt.Printf("   %s\n", values[1])
 	}
 }
