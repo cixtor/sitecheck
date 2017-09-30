@@ -122,16 +122,7 @@ func (s *Scanner) Print(export bool) {
 	s.printOutdatedScan()
 	s.printLinks()
 	s.printBlacklistStatus()
-
-	// Print malware payload information.
-	if len(s.Report.Malware.Warn) > 0 {
-		fmt.Println()
-		fmt.Println("\033[48;5;161m @ Malware Payloads \033[0m")
-		for _, values := range s.Report.Malware.Warn {
-			fmt.Printf(" \033[0;91m\u2022\033[0m %s\n", values[0])
-			fmt.Printf("%s", s.Justify(values[1]))
-		}
-	}
+	s.printMalwarePayloads()
 }
 
 func (s *Scanner) printWebsiteInformation() {
@@ -252,5 +243,19 @@ func (s *Scanner) printBlacklistStatus() {
 	for _, values := range s.Report.Blacklist.Info {
 		fmt.Printf(" \033[0;92m\u2714\033[0m %s\n", values[0])
 		fmt.Printf("   %s\n", values[1])
+	}
+}
+
+func (s *Scanner) printMalwarePayloads() {
+	if len(s.Report.Malware.Warn) <= 0 {
+		return
+	}
+
+	fmt.Println()
+	fmt.Println("\033[48;5;161m @ Malware Payloads \033[0m")
+
+	for _, values := range s.Report.Malware.Warn {
+		fmt.Printf(" \033[0;91m\u2022\033[0m %s\n", values[0])
+		fmt.Printf("%s", s.Justify(values[1]))
 	}
 }
