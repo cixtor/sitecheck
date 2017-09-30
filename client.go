@@ -178,6 +178,7 @@ func (s *Scanner) printApplicationDetails() {
 	}
 }
 
+// PrintRecommendations print security recommendations.
 func (s *Scanner) printRecommendations() {
 	if len(s.Report.Recommendations) <= 0 {
 		return
@@ -194,6 +195,7 @@ func (s *Scanner) printRecommendations() {
 	}
 }
 
+// PrintOutdatedScan print outdated software information.
 func (s *Scanner) printOutdatedScan() {
 	if len(s.Report.OutdatedScan) <= 0 {
 		return
@@ -209,6 +211,7 @@ func (s *Scanner) printOutdatedScan() {
 	}
 }
 
+// PrintLinks print links, iframes, and local/external javascript files.
 func (s *Scanner) printLinks() {
 	for key, values := range s.Report.Links {
 		fmt.Println()
@@ -220,6 +223,7 @@ func (s *Scanner) printLinks() {
 	}
 }
 
+// PrintBlacklistStatus print blacklist status information.
 func (s *Scanner) printBlacklistStatus() {
 	if len(s.Report.Blacklist.Warn) <= 0 && len(s.Report.Blacklist.Info) <= 0 {
 		return
@@ -246,6 +250,7 @@ func (s *Scanner) printBlacklistStatus() {
 	}
 }
 
+// PrintMalwarePayloads print malware payload information.
 func (s *Scanner) printMalwarePayloads() {
 	if len(s.Report.Malware.Warn) <= 0 {
 		return
