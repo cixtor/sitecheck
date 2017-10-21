@@ -6,7 +6,7 @@ import (
 	"os"
 )
 
-const service = "https://sitecheck.sucuri.net/"
+const service = "https://sitecheck.sucuri.net"
 
 var website = flag.String("d", "", "Domain name or web application to scan")
 var usecache = flag.Bool("c", false, "Recycle the results from a previous scan")

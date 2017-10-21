@@ -16,14 +16,11 @@ func NewScanner(domain string) *Scanner {
 
 // URL builds and returns the URL for the API calls.
 func (s *Scanner) URL() string {
-	urlStr := service + "?json=1&fromwp=2"
-
-	if !s.FromCache {
-		/* get fresh results */
-		urlStr += "&clear=1"
+	if s.FromCache {
+		return service + "/api/v2/?json&scan=" + s.Domain
 	}
 
-	return urlStr + "&scan=" + s.Domain
+	return service + "/api/v2/?json&clear&scan=" + s.Domain
 }
 
 // UseCachedResults forces the scanner to retrieve cached results.
