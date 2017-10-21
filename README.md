@@ -22,3 +22,5 @@ $ sitecheck -d example.com
 $ sitecheck -d example.com -e | python -m json.tool
 $ sitecheck -d example.com -e -c | python -m json.tool
 ```
+
+![screenshot](http://localhost:8080/screenshot.png)
