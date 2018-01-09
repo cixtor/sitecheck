@@ -16,11 +16,13 @@ go get -u github.com/cixtor/sitecheck
 
 ### Usage
 
-```
-$ sitecheck -help
-$ sitecheck -d example.com
-$ sitecheck -d example.com -e | python -m json.tool
-$ sitecheck -d example.com -e -c | python -m json.tool
-```
+Command                     | Description
+----------------------------|-----------------------
+sitecheck -help             | Shows this information
+sitecheck -d example.com    | Executes a fresh web malware scan on the domain
+sitecheck -d example.com -e | Executes and returns the malware scan results as JSON
+sitecheck -d example.com -c | Executes and returns a cached version of the malware scan
+
+**Note:** As of May, 2018 a fresh malware scan takes around +7secs or +2secs from cache.
 
 ![screenshot](http://localhost:8080/screenshot.png)
