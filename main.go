@@ -8,9 +8,15 @@ import (
 
 const service = "https://sitecheck.sucuri.net"
 
-var website = flag.String("d", "", "Domain name or web application to scan")
-var usecache = flag.Bool("c", false, "Recycle the results from a previous scan")
-var export = flag.Bool("e", false, "Export scan results as a JSON encoded string")
+var website string
+var usecache bool
+var export bool
+
+func init() {
+	flag.StringVar(&website, "d", "", "Domain name or web application to scan")
+	flag.BoolVar(&usecache, "c", false, "Recycle the results from a previous scan")
+	flag.BoolVar(&export, "e", false, "Export scan results as a JSON encoded string")
+}
 
 func main() {
 	flag.Usage = func() {
@@ -33,21 +39,21 @@ func main() {
 
 	flag.Parse()
 
-	if *website == "" {
-		fmt.Println("Invalid domain name or web application")
+	if website == "" {
+		flag.Usage()
 		os.Exit(1)
 	}
 
-	scanner := NewScanner(*website)
+	scanner := NewScanner(website)
 
-	if *usecache {
+	if usecache {
 		scanner.UseCachedResults()
 	}
 
-	if err := scanner.Scan(*export); err != nil {
+	if err := scanner.Scan(export); err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}
 
-	scanner.Print(*export)
+	scanner.Print(export)
 }
