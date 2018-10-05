@@ -23,36 +23,35 @@ func (s *Scanner) URL() string {
 	return service + "/api/v2/?json&clear&scan=" + s.Domain
 }
 
-// UseCachedResults forces the scanner to retrieve cached results.
-func (s *Scanner) UseCachedResults() {
-	s.FromCache = true
-}
-
 // Request builds and sends the HTTP request to the API service.
 func (s *Scanner) Request() (io.Reader, error) {
-	client := &http.Client{}
-	req, err := http.NewRequest("GET", s.URL(), nil)
+	client := &http.Client{Timeout: timeout}
+
+	req, err := http.NewRequest(http.MethodGet, s.URL(), nil)
 
 	if err != nil {
 		return nil, err
 	}
 
-	req.Header.Add("DNT", "1")
 	req.Header.Add("Connection", "keep-alive")
 	req.Header.Add("Accept", "application/json")
 	req.Header.Add("Accept-Language", "end-US,en")
-	req.Header.Set("User-Agent", "Mozilla/5.0 (KHTML, like Gecko) Safari/537.36")
+	req.Header.Add("User-Agent", "Mozilla/5.0 (KHTML, like Gecko) Safari/537.36")
 
-	resp, err := client.Do(req)
+	res, err := client.Do(req)
 
 	if err != nil {
 		return nil, err
 	}
 
-	defer resp.Body.Close()
+	defer func() {
+		if err := res.Body.Close(); err != nil {
+			fmt.Println("res.Body.Close", err)
+		}
+	}()
 
 	var buf bytes.Buffer
-	(&buf).ReadFrom(resp.Body)
+	(&buf).ReadFrom(res.Body)
 
 	return &buf, nil
 }
@@ -130,12 +129,10 @@ func (s *Scanner) printWebsiteInformation() {
 	fmt.Printf(" \033[1;95mIP:\033[0m %s\n", strings.Join(s.Report.Scan.IP, ",\x20"))
 	fmt.Printf(" \033[1;95mCMS:\033[0m %s\n", strings.Join(s.Report.Scan.CMS, ",\x20"))
 
-	if s.Report.Scan.WAF.HasWAF == 1 {
-		if s.Report.Scan.WAF.HasSucuriWAF == 1 {
-			fmt.Printf(" \033[1;95mFirewall:\033[0m Sucuri Firewall\n")
-		} else {
-			fmt.Printf(" \033[1;95mFirewall:\033[0m Generic Firewall\n")
-		}
+	if s.Report.Scan.WAF.HasSucuriWAF == 1 {
+		fmt.Printf(" \033[1;95mFirewall:\033[0m Sucuri Firewall\n")
+	} else if s.Report.Scan.WAF.HasWAF == 1 {
+		fmt.Printf(" \033[1;95mFirewall:\033[0m Generic Firewall\n")
 	} else {
 		fmt.Printf(" \033[1;95mFirewall:\033[0m \033[0;91mNo\033[0m\n")
 	}

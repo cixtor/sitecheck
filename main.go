@@ -4,9 +4,11 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"time"
 )
 
 const service = "https://sitecheck.sucuri.net"
+const timeout = 60 * time.Second
 
 var website string
 var usecache bool
@@ -47,7 +49,7 @@ func main() {
 	scanner := NewScanner(website)
 
 	if usecache {
-		scanner.UseCachedResults()
+		scanner.FromCache = true
 	}
 
 	if err := scanner.Scan(export); err != nil {
