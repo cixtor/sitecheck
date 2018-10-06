@@ -20,7 +20,7 @@ func (s *Scanner) URL() string {
 		return service + "/api/v2/?json&scan=" + s.Domain
 	}
 
-	return service + "/api/v2/?json&clear&scan=" + s.Domain
+	return service + "/api/v2/?json&scan=" + s.Domain + "&clear"
 }
 
 // Request builds and sends the HTTP request to the API service.
