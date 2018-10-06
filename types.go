@@ -15,7 +15,7 @@ type Result struct {
 	Version         ResultVersion       `json:"VERSION"`
 	System          map[string][]string `json:"SYSTEM"`
 	Links           map[string][]string `json:"LINKS"`
-	Recommendations [][]string          `json:"RECOMMENDATIONS"`
+	Recommendations map[string][]string `json:"RECOMMENDATIONS"`
 	OutdatedScan    [][]string          `json:"OUTDATEDSCAN"`
 	Blacklist       InfoWarning         `json:"BLACKLIST"`
 	Malware         InfoWarning         `json:"MALWARE"`

@@ -182,10 +182,9 @@ func (s *Scanner) printRecommendations() {
 	fmt.Println("\033[48;5;068m @ Recommendations \033[0m")
 
 	for _, values := range s.Report.Recommendations {
-		fmt.Print(" \033[0;94m\u2022\033[0m")
-		fmt.Print(" \033[0;1m" + values[0] + "\033[0m\n")
-		fmt.Print("   " + values[1] + "\n")
-		fmt.Print("   " + values[2] + "\n")
+		for _, value := range values {
+			fmt.Print(" \033[0;94m\u2022\033[0m " + value + "\n")
+		}
 	}
 }
 
